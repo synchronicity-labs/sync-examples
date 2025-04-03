@@ -1,0 +1,4 @@
+SYNCLABS_API_KEY = ""
+ELEVENLABS_API_KEY = ""
+INPUT_CSV_PATH = "example.csv"
+OUTPUT_CSV_PATH = "outputs.csv"
