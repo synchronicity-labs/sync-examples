@@ -19,7 +19,13 @@ To get started, follow these steps:
     git clone <repository_url>
     cd <repository_directory>
     ```
-2. **Prepare the args.py file**:
+
+2. Install required packages
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. **Prepare the args.py file**:
 
 - Fill in the `args.py` file with the required data. 
 - You can specify a `voice_id` in the file. If left blank, the code will automatically clone the voice based on the audio in the video input.
@@ -34,13 +40,13 @@ If you don't specify values for lipsync, OpenAI, and TTS options in the `args.py
 - `transcription_model`: `"whisper-1"`
 - `gpt_model`: `"gpt-3.5-turbo"`
 
-3. **Update the API keys, video URL, target language**:
+4. **Update the API keys, video URL, target language**:
 
 - Open the `args.py` file and insert your **Sync API key**, **OpenAI API key**, and **ElevenLabs API key**.
 - Insert the URL to your input video in the same file.
 - Type in the target language to which you want to translate the video to
 
-4. **Run the application**:
+5. **Run the application**:
 
 - Execute the main.py script to generate the translated video:
     ```bash
