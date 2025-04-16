@@ -1,2 +1,2 @@
 requests
-openai
+openai==1.40.3

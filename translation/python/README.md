@@ -3,6 +3,7 @@
 This is an example repository to show how to integrate Sync.so's LipSync API easily in your workflows. The example shown here is for creating lipsynced translated videos for a target language. For voice cloning and TTS, ElevenLabs is used. For transcription & translation, OpenAI is used.
 
 ## Prerequisites
+Python 3.8+ is recommended for optimal performance and compatibility with all features.
 
 Before running the code, ensure that you have the following:
 
