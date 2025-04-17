@@ -89,7 +89,7 @@ class FileProcessor():
             reader = csv.DictReader(file)
             
             # Verify required columns exist
-            required_columns = ['video', 'text', 'voice_id', 'segment_start', 'segment_end', 'sync_mode', 'output_format','lipsync_model', 'tts_model']
+            required_columns = ['video', 'text', 'voice_id', 'segment_start', 'segment_end', 'sync_mode','lipsync_model', 'tts_model']
             if not all(col in reader.fieldnames for col in required_columns):
                 raise ValueError(f"CSV must contain columns: {required_columns}")
             
@@ -101,7 +101,6 @@ class FileProcessor():
                     'segment_start': row.get('segment_start',-1),
                     'segment_end': row.get('segment_end',-1),
                     'sync_mode': row.get('sync_mode','bounce'),
-                    'output_format': row.get('output_format','mp4'),
                     'lipsync_model': row.get('lipsync_model','lipsync-2'),
                     'tts_model': row.get('tts_model','eleven_multilingual_v2')
                 }

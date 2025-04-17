@@ -26,7 +26,6 @@ To get started, follow these steps:
 #### Default values:
 If you don't specify values for lipsync and TTS options in the CSV, the following default settings will be applied:
 - `sync_mode`: `"bounce"`
-- `output_format`: `"mp4"`
 - `lipsync_model`: `"lipsync-2"`
 - `tts_model`: `"eleven_multilingual_v2"`
 

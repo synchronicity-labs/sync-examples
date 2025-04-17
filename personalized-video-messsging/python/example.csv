@@ -1,4 +1,4 @@
-video,text,segment_start,segment_end,sync_mode,output_format,voice_id,lipsync_model,tts_model
-https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,Gravity,0,1,bounce,mp4,,lipsync-1.9.0-beta,eleven_multilingual_v2
-https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,The state of the world,0,1,bounce,mp4,,lipsync-1.9.0-beta,eleven_multilingual_v2
-https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,Happiness,0,1,bounce,mp4,,lipsync-1.9.0-beta,eleven_multilingual_v2
+video,text,segment_start,segment_end,sync_mode,voice_id,lipsync_model,tts_model
+https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,Gravity,0,1,bounce,,lipsync-1.9.0-beta,eleven_multilingual_v2
+https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,The state of the world,0,1,bounce,,lipsync-1.9.0-beta,eleven_multilingual_v2
+https://public-sync-test-files.s3.us-east-1.amazonaws.com/video-short.mp4,Happiness,0,1,bounce,,lipsync-1.9.0-beta,eleven_multilingual_v2

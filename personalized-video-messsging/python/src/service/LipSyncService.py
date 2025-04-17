@@ -114,11 +114,7 @@ class LipSyncProcessor():
                     }
                 ],
                 "options": {
-                    "pads": [0, 5, 0, 0],
-                    "speedup": 1,
-                    "output_format": entry['output_format'],
                     "sync_mode": entry['sync_mode'],
-                    "active_speaker": True
                 }
                 # "webhookUrl": "https://your-server.com/webhook"
             }
