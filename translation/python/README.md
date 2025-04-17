@@ -36,8 +36,6 @@ To get started, follow these steps:
 
 #### Default values:
 If you don't specify values for lipsync, OpenAI, and TTS options in the `args.py`, the following default settings will be applied:
-- `sync_mode`: `"bounce"`
-- `output_format`: `"mp4"`
 - `lipsync_model`: `"lipsync-2"`
 - `tts_model`: `"eleven_multilingual_v2"`
 - `transcription_model`: `"whisper-1"`

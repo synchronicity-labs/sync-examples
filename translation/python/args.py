@@ -16,6 +16,5 @@ class Args:
     
     voice_id = ""
     sync_mode = "bounce"
-    output_format = "mp4"
     segment_start = -1
     segment_end = -1

@@ -87,7 +87,6 @@ class FileProcessor():
             'source_language': '',
             "output_json_path": 'output.json',
             'sync_mode': "bounce",
-            'output_format': "mp4",
             'segment_start': -1,
             'segment_end': -1
         }

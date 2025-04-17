@@ -95,7 +95,6 @@ class LipSyncProcessor():
                 - 'aud_url': URL of the audio file to use for lip-syncing
                 - 'segment_start': Start time (in seconds) of the video segment
                 - 'segment_end': End time (in seconds) of the video segment
-                - 'output_format': Format for lipsynced video
                 = 'sync_mode': sync mode to match input audio, video
                 
         Returns:
@@ -119,9 +118,6 @@ class LipSyncProcessor():
                     }
                 ],
                 "options": {
-                    "pads": [0, 5, 0, 0],
-                    "speedup": 1,
-                    "output_format": args.output_format,
                     "sync_mode": args.sync_mode,
                 }
                 # "webhookUrl": "https://your-server.com/webhook"
