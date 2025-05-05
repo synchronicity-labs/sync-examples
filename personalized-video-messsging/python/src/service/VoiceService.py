@@ -48,7 +48,6 @@ class VoiceProcessor():
                 json_data=json_data,
                 headers=self.headers
             )
-            print(f"Speech gen successful.")
             return response.content
             
         except Exception as e:
@@ -134,6 +133,7 @@ class VoiceProcessor():
             voice_id = response.json().get('voice_id')
             
             if not voice_id:
+                print(response.json())
                 raise ValueError("Voice cloning response did not contain a voice_id")
                 
             print(f"Successfully cloned voice with ID: {voice_id}")

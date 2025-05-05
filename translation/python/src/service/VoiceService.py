@@ -55,7 +55,6 @@ class VoiceProcessor():
                 json_data=json_data,
                 headers=self.headers
             )
-            print(f"Speech gen successful.")
             return response.content
             
         except Exception as e:

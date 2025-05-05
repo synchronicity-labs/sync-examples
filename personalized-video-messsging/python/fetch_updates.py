@@ -1,17 +1,14 @@
 import os
 import csv
-import requests
+import json
 from urllib.parse import urlparse
 from constants import *
+from sync import Sync
+from sync.core.api_error import ApiError
 
 class FetchOutputs:
     def __init__(self):
-        self.base_url = "https://api.sync.so/v2/generate"
-        
-        self.headers = {
-            "x-api-key": SYNCLABS_API_KEY,
-            "Content-Type": "application/json"
-        }
+        self.client = Sync(api_key=SYNCLABS_API_KEY,)
 
     def load_csv_data(self, csv_path):
         """
@@ -35,7 +32,7 @@ class FetchOutputs:
             reader = csv.DictReader(file)
             
             # Verify required columns exist
-            required_columns = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'outputUrl']
+            required_columns = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'output_url']
             if not all(col in reader.fieldnames for col in required_columns):
                 raise ValueError(f"CSV must contain columns: {required_columns}")
             
@@ -46,7 +43,7 @@ class FetchOutputs:
                     'voice_id': row.get('voice_id'),
                     'audio': row.get('audio'),
                     'lipsync_jobID': row.get('lipsync_jobID'),
-                    'outputUrl': row.get('outputUrl'),
+                    'outputUrl': row.get('output_url'),
                 }
             
                 entries.append(entry)    
@@ -66,7 +63,7 @@ class FetchOutputs:
         
         # Extract fieldnames from the first dictionary
         # fieldnames = set().union(*(d.keys() for d in data))
-        fieldnames = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'outputUrl']
+        fieldnames = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'output_url']
         
         try:
             with open(filename, 'w', newline='') as csvfile:
@@ -100,12 +97,13 @@ class FetchOutputs:
             Exception: If the request to get an update has an error.
         """
         try:
-            response = requests.get(f"{self.base_url}/{job_id}", headers=self.headers)
-            response.raise_for_status()
-            data = response.json()
+            response = self.client.generations.get(
+                id=job_id,
+            )
+            data = json.loads(response.json())
             return data
-        except requests.RequestException as e:
-            print(f"Error checking status for job {job_id}: {e}")
+        except ApiError as e:
+            print(f"Error checking status for job {job_id}: {e.status_code} {e.body}")
         return None
 
     def run(self):
@@ -116,7 +114,7 @@ class FetchOutputs:
         # check if outputUrl field is a URL and if not then append to jobs for polling
         jobs = []
         for i, entry in enumerate(entries):
-            if bool(urlparse(entry['outputUrl']).scheme and urlparse(entry['outputUrl']).netloc):
+            if bool(urlparse(entry['output_url']).scheme and urlparse(entry['output_url']).netloc):
                 continue
             else:
                 jobs.append((i,entry['lipsync_jobID']))
@@ -125,9 +123,9 @@ class FetchOutputs:
             data = self.get_update(job)
             if data:
                 if data['status'] == 'COMPLETED':
-                    entries[i]['outputUrl'] = data['outputUrl']
+                    entries[i]['output_url'] = data['output_url']
                 else:
-                    entries[i]['outputUrl'] = data['status']
+                    entries[i]['output_url'] = data['status']
         
         # write the fetched update in output csv
         self.write_dicts_to_csv(entries, OUTPUT_CSV_PATH)
