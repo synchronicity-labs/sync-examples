@@ -123,7 +123,7 @@ class FileProcessor():
         
         # Extract fieldnames from the first dictionary
         # fieldnames = set().union(*(d.keys() for d in data))
-        fieldnames = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'outputUrl']
+        fieldnames = ['video', 'text', 'audio', 'voice_id', 'lipsync_jobID', 'output_url']
         
         try:
             with open(filename, 'w', newline='') as csvfile:

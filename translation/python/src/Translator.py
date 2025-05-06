@@ -79,7 +79,7 @@ class Translator:
         lipsync_results = self.lipsync_service.poll_for_status([response_json['id']])
         
         for res in lipsync_results:
-            output['outputUrl'] = res['outputUrl']
+            output['output_url'] = res['output_url']
         
         pprint.pprint(output)
 

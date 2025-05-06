@@ -1,17 +1,14 @@
-import os
 import json
-import requests
+from sync import Sync
+from sync.core.api_error import ApiError
 from urllib.parse import urlparse
 from args import Args
 
 class FetchOutputs:
     def __init__(self):
-        self.base_url = "https://api.sync.so/v2/generate"
+        
         self.args = Args()
-        self.headers = {
-            "x-api-key": self.args.SYNCLABS_API_KEY,
-            "Content-Type": "application/json"
-        }
+        self.client = Sync(api_key=self.args.SYNCLABS_API_KEY,)
 
     def get_update(self, job_id):
         """
@@ -27,12 +24,13 @@ class FetchOutputs:
             Exception: If the request to get an update has an error.
         """
         try:
-            response = requests.get(f"{self.base_url}/{job_id}", headers=self.headers)
-            response.raise_for_status()
-            data = response.json()
+            response = self.client.generations.get(
+                id=job_id,
+            )
+            data = json.loads(response.json())
             return data
-        except requests.RequestException as e:
-            print(f"Error checking status for job {job_id}: {e}")
+        except ApiError as e:
+            print(f"Error checking status for job {job_id}: {e.status_code} {e.body}")
         return None
 
     def run(self):
@@ -44,7 +42,7 @@ class FetchOutputs:
 
         # check if outputUrl field is a URL and if not then append to jobs for polling
         jobs = []
-        if bool(urlparse(entry['outputUrl']).scheme and urlparse(entry['outputUrl']).netloc):
+        if bool(urlparse(entry['output_url']).scheme and urlparse(entry['output_url']).netloc):
             print('outputUrl field already has a URL')
         else:
             jobs.append(entry['lipsync_jobID'])
@@ -53,9 +51,9 @@ class FetchOutputs:
             data = self.get_update(job)
             if data:
                 if data['status'] == 'COMPLETED':
-                    entry['outputUrl'] = data['outputUrl']
+                    entry['output_url'] = data['output_url']
                 else:
-                    entry['outputUrl'] = data['status']
+                    entry['output_url'] = data['status']
         
         # write the fetched update in output json
         with open(self.args.output_json_path, 'w') as f:

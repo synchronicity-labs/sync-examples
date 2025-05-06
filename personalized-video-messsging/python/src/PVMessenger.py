@@ -1,5 +1,4 @@
 import os
-import logging
 
 from src.service.LipSyncService import LipSyncProcessor
 from src.service.VoiceService import VoiceProcessor
@@ -51,10 +50,10 @@ class PVMessenger:
             os.remove(temp_video)
             os.remove(temp_audio)
         
-        
         for i, entry in enumerate(entries):
             # update voice_id in all entries
-            entry['voice_id'] = voice_id
+            if not entry['voice_id']:
+                entry['voice_id'] = voice_id
 
             # generate speech using the voice ID and the text field from the csv, output is audio bytes
             # print(f"Generating speech for voice ID: {entry['voice_id']}, entry {i+1}")
@@ -93,10 +92,9 @@ class PVMessenger:
         lipsync_results = self.lipsync_service.poll_for_status(jobs)
         
         for res in lipsync_results:
-            entries[res['idx']]['outputUrl'] = res['outputUrl']
+            entries[res['idx']]['output_url'] = res['output_url']
         
         self.file_processor.write_dicts_to_csv(entries, output_csv_path)
 
         return output_csv_path
-
         

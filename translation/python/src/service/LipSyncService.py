@@ -1,6 +1,7 @@
-import os
-import requests
-from typing import Dict, Optional, Any, List
+import json
+from sync import Sync
+from sync.common import Audio, GenerationOptions, Video
+from sync.core.api_error import ApiError
 import time
 
 
@@ -13,12 +14,7 @@ class LipSyncProcessor():
         if not lipsync_api_key:
             raise ValueError("Sync API key is required in constants.py")
         
-        self.base_url = "https://api.sync.so/v2/generate"
-        
-        self.headers = {
-            "x-api-key": lipsync_api_key,
-            "Content-Type": "application/json"
-        }        
+        self.client = Sync(api_key=lipsync_api_key,)        
 
     def poll_for_status(self, jobs, timeout=3600, interval=10):
         """
@@ -50,10 +46,11 @@ class LipSyncProcessor():
             # Check each pending job
             for job_id in list(pending_jobs):
                 try:
-                    response = requests.get(f"{self.base_url}/{job_id}", headers=self.headers)
-                    response.raise_for_status()
-
-                    data = response.json()
+                    response = self.client.generations.get(
+                        id=job_id,
+                    )
+                    
+                    data = json.loads(response.json())
                     status = data.get('status')
                     
                     # If job is complete, remove from pending list
@@ -61,13 +58,13 @@ class LipSyncProcessor():
                         pending_jobs.remove(job_id)
                         results.append(data)
                         print(f"Job {job_id} completed successfully.")
-                    elif status in ["FAILED", "REJECTED", "CANCELED", "TIMED_OUT"]:
+                    elif status == "FAILED":
                         print(f"Lipsync process failed or timed out for {job_id} with status: {status} and error: {data.get('error','')}")
                         pending_jobs.remove(job_id)
-                        data['outputUrl'] = f'Job Status {status}'
+                        data['output_url'] = f'Job Status {status}'
                         results.append(data) 
-                except requests.RequestException as e:
-                    print(f"Error checking status for job {job_id}: {e}")
+                except ApiError as e:
+                    print(f"Error checking status for job {job_id}: {e.status_code} {e.body}")
             
             # If jobs still pending, wait before next check
             if pending_jobs:
@@ -78,7 +75,7 @@ class LipSyncProcessor():
         if pending_jobs:
             print(f"Polling process timed out waiting for jobs: {pending_jobs}")
             for job_id in list(pending_jobs):
-                data = {'outputUrl':'POLLING TIME OUT. Check job status after some time.'}
+                data = {'output_url':'POLLING TIME OUT. Check job status after some time.'}
                 results.append(data)              
         return results
 
@@ -103,38 +100,26 @@ class LipSyncProcessor():
         Raises:
             requests.exceptions.RequestException: If the API request fails
         """
-
-        payload = {
-                "model": args.lipsync_model,
-                "input": [
-                    {
-                        "type": "video",
-                        "url": args.input_vid_url,
-                        "segments_secs" : [[args.segment_start, args.segment_end]]
-                    },
-                    {
-                        "type": "audio",
-                        "url": args.aud_url
-                    }
-                ],
-                "options": {
-                    "sync_mode": args.sync_mode,
-                }
-                # "webhookUrl": "https://your-server.com/webhook"
-            }
         
         try:
-            response = requests.request(
-                method="POST",
-                url=self.base_url,
-                headers=self.headers,
-                json=payload
+            response = self.client.generations.create(
+                input=[
+                    Video(
+                        url=args.input_vid_url,
+                        segments_secs=[[args.segment_start, args.segment_end]],
+                    ),
+                    Audio(
+                        url=args.aud_url,
+                    ),
+                ],
+                model=args.lipsync_model,
+                options=GenerationOptions(
+                    sync_mode=args.sync_mode,
+                ),
             )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"API request failed: {e}")
-            if hasattr(e.response, 'text'):
-                print(f"Response: {e.response.text}")
+            return json.loads(response.json())
+        except ApiError as e:
+            print(e.status_code)
+            print(e.body)
             raise
         
