@@ -15,9 +15,9 @@ Process multiple lipsync generation requests efficiently using the [Sync Batch A
    pip install -r requirements.txt
    ```
 
-2. **Configure API credentials in `main.py`:**
-   ```python
-   sync = Sync(api_key="your-actual-api-key-here")
+2. **Configure API credentials:**
+   ```bash
+   export SYNC_API_KEY=<your_api_key>
    ```
 
 3. **Optional webhook URL** for completion notifications:

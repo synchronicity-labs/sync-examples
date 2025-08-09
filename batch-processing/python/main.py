@@ -3,14 +3,18 @@ import requests
 import argparse
 from sync import Sync
 
-sync = Sync(api_key="<YOUR_API_KEY>")
+sync = Sync()
 
 def create_batch(input_file, dry_run=False):
-    batch_response = sync.batch.create(
-        input=open(input_file, "rb"),
-        webhook_url="<YOUR_WEBHOOK_URL>",
-        dry_run=dry_run
-    )
+    try:
+        batch_response = sync.batch.create(
+            input=open(input_file, "rb"),
+            webhook_url="<YOUR_WEBHOOK_URL>",
+            dry_run=dry_run
+        )
+    except Exception as e:
+        print(f"Error creating batch: {e}")
+        return None
     if dry_run:
         print(f"Dry run validation successful for file: {input_file}")
         return None
@@ -25,6 +29,8 @@ def poll_batch_job(batch_id):
         if batch_status == "COMPLETED" or batch_status == "FAILED":
             break
         batch_response = sync.batch.get(batch_id)
+        print(f'Batch {batch_id} status: {batch_response.status}')
+        print(f'Batch {batch_id} metrics: {batch_response.metrics}')
         batch_status = batch_response.status
         time.sleep(60)
     output_url = batch_response.output_url
@@ -66,6 +72,11 @@ if __name__ == "__main__":
     else:
         # Create new batch or validate
         batch_id = create_batch(args.input_file, dry_run=args.dry_run)
+        if batch_id:
+            print(f'Successfully created batch {batch_id}')
+        else:
+            print('Failed to create batch')
+            exit(1)
         
         if args.dry_run:
             # Dry run mode - just validation, no monitoring
@@ -73,6 +84,7 @@ if __name__ == "__main__":
         else:
             # Normal mode - conditionally monitor the new batch
             if args.monitor:
+                print(f'Monitoring batch {batch_id}')
                 poll_batch_job(batch_id)
             else:
                 print(f"Batch {batch_id} created. Run `python main.py --batch-id {batch_id} --monitor` to monitor the batch progress")
