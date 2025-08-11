@@ -20,11 +20,6 @@ Process multiple lipsync generation requests efficiently using the [Sync Batch A
    export SYNC_API_KEY=<your_api_key>
    ```
 
-3. **Optional webhook URL** for completion notifications:
-   ```python
-   webhook_url="https://your-webhook-endpoint.com/batch-complete"
-   ```
-
 ## Usage
 
 ### Create and monitor a new batch:

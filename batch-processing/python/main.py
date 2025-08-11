@@ -9,7 +9,6 @@ def create_batch(input_file, dry_run=False):
     try:
         batch_response = sync.batch.create(
             input=open(input_file, "rb"),
-            webhook_url="<YOUR_WEBHOOK_URL>",
             dry_run=dry_run
         )
     except Exception as e:
