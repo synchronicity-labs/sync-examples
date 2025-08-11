@@ -16,7 +16,7 @@ def create_batch(input_file, dry_run=False):
         print(f"Error creating batch: {e}")
         return None
     if dry_run:
-        print(f"Dry run validation successful for file: {input_file}")
+        print(f"Dry run validation successful for file: {input_file} with status: {batch_response.status}")
         return None
     return batch_response.id
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         batch_id = create_batch(args.input_file, dry_run=args.dry_run)
         if batch_id:
             print(f'Successfully created batch {batch_id}')
-        else:
+        elif not args.dry_run:
             print('Failed to create batch')
             exit(1)
         
